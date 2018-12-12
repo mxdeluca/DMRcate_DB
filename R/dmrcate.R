@@ -164,6 +164,7 @@ dmrcate <-
       data.frame(
         coord = coord.A,
         no.cpgs = no_cpg.A,
+        minpvalue = REGIONSTAT("raw", min),
         minfdr = REGIONSTAT("fdr", min),
         Stouffer = REGIONSTAT("indfdr", fn_Stouffer),
         maxbetafc = REGIONSTAT("betafc", fn_max),
@@ -173,7 +174,7 @@ dmrcate <-
       )
 
     # Order and filter DMRs
-    
+
     keep <- (results$no.cpgs >= min.cpgs)
     results <- results[keep, ]
     if (!is.null(betacutoff))
