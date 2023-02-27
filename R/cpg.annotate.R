@@ -1,8 +1,9 @@
 cpg.annotate <- function (datatype = c("array", "sequencing"), object, what = c("Beta", 
                                                                 "M"), arraytype = c("EPIC", "450K"), analysis.type = c("differential", 
                                                                                                                        "variability", "ANOVA", "diffVar"), design, contrasts = FALSE, 
-          cont.matrix = NULL, fdr = 0.05, coef, ...) 
+          cont.matrix = NULL, fdr = 0.05, coef,DB_ref,DB_ref_n) 
 {
+  DB_ref <- DB_ref[match(row.names(object),row.names(DB_ref)),]
   analysis.type <- match.arg(analysis.type)
   what <- match.arg(what)
   arraytype <- match.arg(arraytype)
@@ -57,13 +58,15 @@ cpg.annotate <- function (datatype = c("array", "sequencing"), object, what = c(
       betafit <- eBayes(betafit)
       betatt <- topTable(betafit, coef = coef, number = nrow(object))
       m <- match(rownames(tt), rownames(betatt))
-      tt$betafc <- betatt$logFC[m]
+      tt <- tt[match(row.names(DB_ref),row.names(tt)),]
+      stopifnot(all(row.names(DB_ref) == row.names(tt)))
+      tt$delta <- DB_ref[,"DB_ref_n"]
       m <- match(rownames(object), rownames(tt))
       tt <- tt[m, ]
       anno <- getAnnotation(grset)
       stat <- tt$t
       annotated <- data.frame(ID = rownames(tt), stat = stat, 
-                              CHR = anno$chr, pos = anno$pos, betafc = tt$betafc, 
+                              CHR = anno$chr, pos = anno$pos, betadb = tt$delta, 
                               indfdr = tt$adj.P.Val, is.sig = tt$adj.P.Val < 
                                 fdr)
     }, variability = {
@@ -72,7 +75,7 @@ cpg.annotate <- function (datatype = c("array", "sequencing"), object, what = c(
       weights <- apply(object, 1, var)
       weights <- weights/mean(weights)
       annotated <- data.frame(ID = rownames(object), stat = weights, 
-                              CHR = RSanno$chr, pos = RSanno$pos, betafc = rep(0, 
+                              CHR = RSanno$chr, pos = RSanno$pos, delta = rep(0, 
                                                                                nrow(object)), indfdr = rep(0, nrow(object)), 
                               is.sig = weights > quantile(weights, 0.95))
     }, ANOVA = {
@@ -97,7 +100,7 @@ cpg.annotate <- function (datatype = c("array", "sequencing"), object, what = c(
       anno <- getAnnotation(grset)
       stat <- sqrtFs
       annotated <- data.frame(ID = rownames(object), stat = stat, 
-                              CHR = anno$chr, pos = anno$pos, betafc = 0, 
+                              CHR = anno$chr, pos = anno$pos, betadb = 0, 
                               indfdr = sqrtfdrs, is.sig = sqrtfdrs < fdr)
     }, diffVar = {
       stopifnot(is.matrix(design))
@@ -129,7 +132,7 @@ cpg.annotate <- function (datatype = c("array", "sequencing"), object, what = c(
       anno <- getAnnotation(grset)
       stat <- tt$t
       annotated <- data.frame(ID = rownames(tt), stat = stat, 
-                              CHR = anno$chr, pos = anno$pos, betafc = 0, 
+                              CHR = anno$chr, pos = anno$pos, betadb = 0, 
                               indfdr = tt$Adj.P.Value, is.sig = tt$Adj.P.Value < 
                                 fdr)
     })
@@ -145,7 +148,7 @@ cpg.annotate <- function (datatype = c("array", "sequencing"), object, what = c(
     if (analysis.type != "differential") 
       stop("Error: only differential analysis.type available for sequencing assays")
     annotated <- data.frame(ID = rownames(object), stat = object$stat, 
-                            CHR = object$chr, pos = object$pos, betafc = object$diff, 
+                            CHR = object$chr, pos = object$pos, betadb = object$diff, 
                             indfdr = object$fdr, is.sig = object$fdr < fdr)
     annotated <- annotated[order(annotated$CHR, annotated$pos), 
                            ]
