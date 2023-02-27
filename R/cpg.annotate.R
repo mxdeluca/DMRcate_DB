@@ -51,7 +51,7 @@ cpg.annotate <- function (datatype = c("array", "sequencing"), object, what = c(
         message(paste("Your contrast returned", nsig, 
                       "individually significant probes. We recommend the default setting of pcutoff in dmrcate()."))
       }
-      betafit <- lmFit(ilogit2(object), design, ...)
+      betafit <- lmFit(ilogit2(object), design)
       if (contrasts) {
         betafit <- contrasts.fit(betafit, cont.matrix)
       }
@@ -109,7 +109,7 @@ cpg.annotate <- function (datatype = c("array", "sequencing"), object, what = c(
       } else {
         stopifnot(!is.null(cont.matrix))
       }
-      fitvar <- varFit(object, design = design, ...)
+      fitvar <- varFit(object, design = design)
       if (contrasts) {
         stopifnot(coef %in% colnames(cont.matrix))
         fitvar <- contrasts.varFit(fitvar, cont.matrix)
