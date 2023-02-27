@@ -81,7 +81,7 @@ cpg.annotate <- function (datatype = c("array", "sequencing"), object, what = c(
     }, ANOVA = {
       message("You are annotating in ANOVA mode: consider making the value of fdr quite small, e.g. 0.001")
       stopifnot(is.matrix(design))
-      fit <- lmFit(object, design, ...)
+      fit <- lmFit(object, design)
       fit <- eBayes(fit)
       sqrtFs <- sqrt(fit$F)
       sqrtfdrs <- p.adjust(fit$F.p.value, method = "BH")
