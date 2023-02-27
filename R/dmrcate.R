@@ -26,7 +26,7 @@ dmrcate <-
                  weights = abs(object$stat),
                  CHR = as.character(object$CHR),
                  pos = object$pos,
-                 betafc = object$betafc,
+                 betadb = object$betadb,
                  indfdr = object$indfdr,
                  is.sig = object$is.sig
                  )
@@ -167,8 +167,8 @@ dmrcate <-
         minpvalue = REGIONSTAT("raw", min),
         minfdr = REGIONSTAT("fdr", min),
         Stouffer = REGIONSTAT("indfdr", fn_Stouffer),
-        maxbetafc = REGIONSTAT("betafc", fn_max),
-        meanbetafc = REGIONSTAT("betafc", mean),
+        maxbetadb = REGIONSTAT("betadb", fn_max),
+        meanbetadb = REGIONSTAT("betadb", mean),
         row.names = seq(A),
         stringsAsFactors = FALSE
       )
@@ -179,7 +179,7 @@ dmrcate <-
     results <- results[keep, ]
     if (!is.null(betacutoff))
     {
-      keep <- (abs(results$meanbetafc) >= betacutoff)
+      keep <- (abs(results$meanbetadb) >= betacutoff)
       results <- results[keep,]
     }
     o <- order(results$Stouffer, -results$no.cpgs)
