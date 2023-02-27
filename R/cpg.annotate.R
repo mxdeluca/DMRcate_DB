@@ -32,7 +32,7 @@ cpg.annotate <- function (datatype = c("array", "sequencing"), object, what = c(
       } else {
         stopifnot(!is.null(cont.matrix))
       }
-      fit <- lmFit(object, design, ...)
+      fit <- lmFit(object, design)
       if (contrasts) {
         stopifnot(coef %in% colnames(cont.matrix))
         fit <- contrasts.fit(fit, cont.matrix)
