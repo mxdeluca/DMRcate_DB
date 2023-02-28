@@ -60,7 +60,7 @@ cpg.annotate <- function (datatype = c("array", "sequencing"), object, what = c(
       m <- match(rownames(tt), rownames(betatt))
       tt <- tt[match(row.names(DB_ref),row.names(tt)),]
       stopifnot(all(row.names(DB_ref) == row.names(tt)))
-      tt$delta <- abs(DB_ref[,DB_ref_n])
+      tt$delta <- DB_ref[,DB_ref_n]
       m <- match(rownames(object), rownames(tt))
       tt <- tt[m, ]
       anno <- getAnnotation(grset)
